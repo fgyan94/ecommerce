@@ -24,7 +24,7 @@ class Page {
 				// OBS: INDO ATÉ O DIRTÓRIO ROOT -> $_SERVER['DOCUMENT_ROOT']
 				"tpl_dir"       => $_SERVER['DOCUMENT_ROOT']."/views/",
 				// CACHE DAS PÁGINAS
-				"cache_dir"     => $_SERVER['DOCUMENT_ROOT']."/views-cache",
+				"cache_dir"     => $_SERVER['DOCUMENT_ROOT']."/views-cache/",
 				"debug"         => false // set to false to improve the speed
 		);
 		
