@@ -13,7 +13,7 @@ class Page {
 	];
 	
 	// AS VARIÁVEIS VIRÃO DE ACORDO COM A ROTA
-	public function __construct($opts = array()) {
+	public function __construct($opts = array(), $tpl_dir = "/views/") {
 		
 		// MERGE DAS OPÇÕES DA PÁGINA
 		// O ARRAY PASSADO NO ÚLTIMO PARÂMETRO SOBRESCREVE OS DEMAIS EM CASO DE CONFLITO DE DADOS
@@ -22,7 +22,7 @@ class Page {
 		$config = array(
 				// DIRETÓRIO ONDE AS PAGES HTML ESTARÃO LOCALIZADAS
 				// OBS: INDO ATÉ O DIRTÓRIO ROOT -> $_SERVER['DOCUMENT_ROOT']
-				"tpl_dir"       => $_SERVER['DOCUMENT_ROOT']."/views/",
+				"tpl_dir"       => $_SERVER['DOCUMENT_ROOT'].$tpl_dir,
 				// CACHE DAS PÁGINAS
 				"cache_dir"     => $_SERVER['DOCUMENT_ROOT']."/views-cache/",
 				"debug"         => false // set to false to improve the speed
