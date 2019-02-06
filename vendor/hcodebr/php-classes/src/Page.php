@@ -9,6 +9,8 @@ class Page {
 	// OPÇÕES PADRÃO, CASO NENHUMA VARIÁVEL SEJA PASSADA NO CONSTRUTOR
 	private $opts = [];
 	private $defaults = [
+			"header"=>true,
+			"footer"=>true,
 			"data"=>[]
 	];
 	
@@ -36,7 +38,7 @@ class Page {
 		$this->setData($this->opts['data']);
 		
 		//  RENDERIZAR O HEADER DA PÁGINA A PARTIR DO TEMPLATE E OS DADOS ENVIADOS PARA ELE
-		$this->tpl->draw("header");
+		if($this->opts['header']) $this->tpl->draw("header");
 		
 	}
 	
@@ -48,7 +50,7 @@ class Page {
 	
 	public function __destruct() {
 		// AO LIBERAR A MEMÓRIA DO PHP, RENDERIZAR O RODAPÉ DA PÁGINA
-		$this->tpl->draw("footer");
+		if($this->opts['footer']) $this->tpl->draw("footer");
 	}
 	
 	private function setData($data = array()) {
