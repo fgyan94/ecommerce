@@ -141,6 +141,7 @@ class User extends Model{
 	
 	public function update() {
 		$sql = new Sql();
+<<<<<<< HEAD
 		$results = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)",
 				array(	
 						":iduser" => $this->getiduser(),
@@ -151,12 +152,25 @@ class User extends Model{
 						":nrphone" => $this->getnrphone(),
 						":inadmin" => $this->getinadmin()
 				));
+=======
+		$results = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, 
+				:inadmin)", array(
+				":iduser" => $this->getiduser(),
+				":desperson" => $this->getdesperson(),
+				":deslogin" => $this->getdeslogin(),
+				":despassword" => $this->getdespassword(),
+				":desemail" => $this->getdesemail(),
+				":nrphone" => $this->getnrphone(),
+				":inadmin" => $this->getinadmin()
+		));
+>>>>>>> 2bf027120fc89660da54ed067b6517fcc32eb0aa
 		
 		$this->setData($results[0]);
 	}
 	
 	public function delete() {
 		$sql = new Sql();
+<<<<<<< HEAD
 		$sql->query("CALL sp_users_delete(:iduser)", array(
 				":iduser"=>$this->getiduser()
 		));
@@ -175,6 +189,17 @@ class User extends Model{
 		$sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser",
 					array(":password" => $password, ":iduser" => $this->getiduser())
 		);
+=======
+		$sql->query("CALL sp_users_delete(:iduser)", array(":iduser" => $this->getiduser()));
+	}
+	
+	public function get($iduser){
+		$sql = new Sql();
+		$results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser",
+								array(":iduser"=>$iduser));
+		
+		$this->setData($results[0]);						
+>>>>>>> 2bf027120fc89660da54ed067b6517fcc32eb0aa
 	}
 	
 	public static function logout() {

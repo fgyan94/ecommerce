@@ -80,7 +80,11 @@ $app->get("/admin/users/:iduser/delete", function($iduser) {
 	
 $app->get("/admin/users/:iduser", function($iduser) {
 	User::verifyLogin();
+<<<<<<< HEAD
 	$user= new User();
+=======
+	$user = new User();
+>>>>>>> 2bf027120fc89660da54ed067b6517fcc32eb0aa
 	$user->get((int) $iduser);
 	$page = new PageAdmin();
 	$page->setTPL("users-update", array(
@@ -101,12 +105,17 @@ $app->post("/admin/users/create", function() {
 $app->post("/admin/users/:iduser", function($iduser) {
 	User::verifyLogin();
 	$user = new User();
+<<<<<<< HEAD
 	$user->get((int)$iduser);
+=======
+	$user->get((int) $iduser);
+>>>>>>> 2bf027120fc89660da54ed067b6517fcc32eb0aa
 	$_POST['inadmin'] = isset($_POST['inadmin']) ? 1 : 0;
 	$user->setData($_POST);
 	$user->update();
 	header("Location: /admin/users");
 	exit;
+<<<<<<< HEAD
 });
 
 $app->get('/admin/forgot', function() {
@@ -135,6 +144,8 @@ $app->get("/admin/forgot/sent", function(){
 	) );
 	
 	$page->setTPL ( "forgot-sent" );
+=======
+>>>>>>> 2bf027120fc89660da54ed067b6517fcc32eb0aa
 });
 
 $app->get('/admin/forgot/reset', function(){
