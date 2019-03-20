@@ -11,6 +11,17 @@ class Product extends Model {
 		return $sql->select("SELECT * FROM tb_products ORDER BY desproduct");
 	}
 	
+	public static function checkList($list) {
+		
+		foreach ($list as &$row) {
+			$product = new Product();
+			$product->setData($row);
+			$row = $product->getValues();
+		}
+		
+		return $list;
+	}
+	
 	public function save() {
 		$sql = new Sql();
 		$results = $sql->select("CALL sp_products_save(:idproduct, :desproduct, :vlprice, :vlwidth, :vlheight, :vllength, :vlweight, :desurl)", 

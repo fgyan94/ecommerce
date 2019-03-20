@@ -1,6 +1,6 @@
 <?php
-// error_reporting ( 0 );
-// ini_set ( “display_errors”, 0 );
+error_reporting ( 0 );
+ini_set ( “display_errors”, 0 );
 
 session_start ();
 
@@ -11,6 +11,7 @@ $app = new Slim ();
 
 $app->config ( 'debug', true );
 
+require_once 'functions.php';
 require_once 'site.php';
 require_once 'admin.php';
 require_once 'admin-users.php';
