@@ -1,10 +1,11 @@
 <?php
 
-use \Hcode\Page;
+use Hcode\Page;
+use Hcode\Model\Address;
+use Hcode\Model\Cart;
+use Hcode\Model\Category;
 use Hcode\Model\Product;
 use Hcode\Model\User;
-use Hcode\Model\Category;
-use Hcode\Model\Cart;
 
 $app->get ( '/', function () {
 	
@@ -125,6 +126,54 @@ $app->post('/cart/freight', function() {
 	$cart->setFreight($_POST['zipcode']);
 	
 	header('Location: /cart');
+	exit;
+});
+
+$app->get('/checkout', function() {
+	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
+	
+	$cart = Cart::getFromSession();
+	
+	$address = new Address();
+	
+	$page = new Page();
+	
+	$page->setTPL('checkout', array(
+			'cart' => $cart->getValues(),
+			'address' => $address->getValues()
+	));
+});
+
+$app->get('/login', function() {
+	
+	$page = new Page();
+	
+	$page->setTPL('login', array(
+			'error' => User::getMsgEror()
+	));
+});
+
+$app->post('/login', function() {
+	
+	try {
+		User::login($_POST['login'], $_POST['password']);
+	} catch(\Exception $e) {
+		User::setMsgError($e->getMessage());
+	}
+	
+	header('Location: /checkout');
+	exit;
+	
+});
+
+$app->get('/logout', function() {
+	User::logout();
+	
+	header('Location: /');
 	exit;
 });
 
