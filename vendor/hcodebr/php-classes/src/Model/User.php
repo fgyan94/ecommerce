@@ -9,6 +9,7 @@ class User extends Model {
 	const SESSION = "User";
 	const SECRET = "HcodePHP7_Secret";
 	const SESSION_ERROR = "UserError";
+	const SESSION_ERROR_REGISTER = "UserErrorRegister";
 	
 	public static function getFromSession() {
 		$user = new User();
@@ -33,7 +34,7 @@ class User extends Model {
 	public static function login($login, $password) {
 		$sql = new Sql();
 		
-		$result = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN", 
+		$result = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE deslogin = :LOGIN", 
 		array(
 			":LOGIN"=>$login
 		));
@@ -217,7 +218,7 @@ class User extends Model {
 		
 		$msg = isset($_SESSION[User::SESSION_ERROR]) ? $_SESSION[User::SESSION_ERROR] : "";
 		
-		Cart::clearMsgError();
+		User::clearMsgError();
 		
 		return $msg;
 		
@@ -225,12 +226,40 @@ class User extends Model {
 	
 	public static function clearMsgError() {
 		
-		$_SESSION[User::SESSION_ERROR] = null;
+		$_SESSION[User::SESSION_ERROR] = "";
 		
 	}
 	
 	public static function getPasswordHash($password) {
 		return password_hash($password, PASSWORD_DEFAULT, ['cost' => 12]);
+	}
+	
+	public static function setErrorRegister($msg) {
+		$_SESSION[User::SESSION_ERROR_REGISTER] = $msg;
+	}
+	
+	public static function getErrorRegister() {
+		
+		$msg = isset($_SESSION[User::SESSION_ERROR_REGISTER]) ? $_SESSION[User::SESSION_ERROR_REGISTER] : "";
+		
+		User::clearMsgErrorRegister();
+		
+		return $msg;
+		
+	}
+	
+	public static function clearMsgErrorRegister() {
+		
+		$_SESSION[User::SESSION_ERROR_REGISTER] = null;
+		
+	}
+	
+	public static function checkLoginExists($login) {
+		$sql = new Sql();
+		
+		$results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :deslogin", [':deslogin' => $login]);
+		
+		return count($results) > 0;
 	}
 }
 
