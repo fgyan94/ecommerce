@@ -136,16 +136,54 @@ $app->get('/checkout', function() {
 		exit;
 	}
 	
+	$address = new Address();
+	
 	$cart = Cart::getFromSession();
 	
-	$address = new Address();
+	if(isset($_GET['zipcode'])) {
+		$address->loadFromCEP($_GET['zipcode']);
+		$cart->setdeszipcode($_GET['zipcode']);
+		$cart->save();
+		$cart->calculateTotal();
+	}
 	
 	$page = new Page();
 	
 	$page->setTPL('checkout', array(
 			'cart' => $cart->getValues(),
-			'address' => $address->getValues()
+			'address' => $address->getValues(),
+			'products' => $cart->getProducts(),
+			'error' => Address::getMsgEror()
 	));
+});
+
+$app->post('/checkout', function() {
+	User::checkLogin();
+	
+	foreach($_POST as $key => $value) {
+		if($key !== 'descomplement') {
+			if(!isset($_POST[$key]) || $_POST[$key] === '') {
+				Address::setMsgErrorByKey($key);
+				header('Location: /checkout');
+				exit;
+			}
+		}
+	}
+	
+	$user = User::getFromSession();
+	
+	$address = new Address();
+	
+	$_POST['deszipcode'] = $_POST['zipcode'];
+	$_POST['idperson'] = $user->getiduser();
+	
+	$address->setData($_POST);
+	
+	$address->save();
+	
+	header('Location: /order');
+	exit;
+	
 });
 
 $app->get('/login', function() {
