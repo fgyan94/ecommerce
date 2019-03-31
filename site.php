@@ -164,12 +164,11 @@ $app->get('/login', function() {
 
 $app->post('/login', function() {
 	
-// 	try {
-// 		User::login($_POST['login'], $_POST['password']);
-// 	} catch(\Exception $e) {
-// 		User::setMsgError($e->getMessage());
-// 	}
-	User::login($_POST['login'], $_POST['password']);
+	try {
+		User::login($_POST['login'], $_POST['password']);
+	} catch(\Exception $e) {
+		User::setMsgError($e->getMessage());
+	}
 	
 	header('Location: /checkout');
 	exit;
@@ -278,6 +277,57 @@ $app->post('/forgot/reset', function(){
 	$page = new Page ();
 	
 	$page->setTPL ( "forgot-reset-success");
+	
+});
+
+$app->get('/profile', function(){
+	
+	User::checkLogin();
+	
+	$user = User::getFromSession();
+	
+	$page = new Page();
+	$page->setTPL('profile', array(
+		'user' => $user->getValues(),
+		'profileMsg' => User::getSuccess(),
+		'profileError' => User::getMsgEror()
+	));
+});
+
+$app->post('/profile', function(){
+	
+	User::checkLogin();
+	
+	if(!isset($_POST['desperson']) || $_POST['desperson'] === '') {
+		User::setMsgError("Preencha o seu nome");
+		header("Location: /profile#user");
+		exit;
+	}
+	
+	if(!isset($_POST['desemail']) || $_POST['desemail'] === '') {
+		User::setMsgError("Preencha o seu email");
+		header("Location: /profile#user");
+		exit;
+	}
+	
+	$user = User::getFromSession();
+	
+	if($_POST['desemail'] !== $user->getdesemail()) {
+		if(User::checkLoginExists($_POST['desemail'])){
+			User::setMsgError("Este endereço de email já está sendo usado por outro usuário");
+			header('Location: /profile#user');
+			exit;
+		}
+	}
+	
+	$user->setData($_POST);
+	
+	$user->update();
+	
+	User::setSuccess("Os dados foram atualizados com sucesso!");
+	
+	header('Location: /profile#user');
+	exit;
 	
 });
 

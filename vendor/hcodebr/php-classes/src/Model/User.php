@@ -10,6 +10,7 @@ class User extends Model {
 	const SECRET = "HcodePHP7_Secret";
 	const SESSION_ERROR = "UserError";
 	const SESSION_ERROR_REGISTER = "UserErrorRegister";
+	const SESSION_SUCCESS = "UserSuccess";
 	
 	public static function getFromSession() {
 		$user = new User();
@@ -266,6 +267,29 @@ class User extends Model {
 		$results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :deslogin", [':deslogin' => $login]);
 		
 		return count($results) > 0;
+	}
+	
+	public static function setSuccess($msg) {
+		
+		$_SESSION[User::SESSION_SUCCESS] = $msg;
+		
+	}
+	
+	
+	public static function getSuccess() {
+		
+		$msg = isset($_SESSION[User::SESSION_SUCCESS]) ? $_SESSION[User::SESSION_SUCCESS] : "";
+		
+		User::clearSuccess();
+		
+		return $msg;
+		
+	}
+	
+	public static function clearSuccess() {
+		
+		$_SESSION[User::SESSION_SUCCESS] = "";
+		
 	}
 }
 
