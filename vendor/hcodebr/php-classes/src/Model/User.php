@@ -39,21 +39,24 @@ class User extends Model {
 			":LOGIN"=>$login
 		));
 		
-		if(count($result) === 0)
-			throw new \Exception("Usuário inexistente ou senha inválida.");
+		if(count($result) === 0) {
+			User::setMsgError("Usuário inexistente ou senha inválida.");
+		} else {
 		
-		$data = $result[0];
-		
-		if(password_verify($password, $data['despassword'])) {
-			$user = new User();
-			$data['desperson'] = utf8_encode($data['desperson']);
-			$user->setData($data);
-			$_SESSION[User::SESSION] = $user->getValues();
+			$data = $result[0];
 			
-			return $user;
-			
-		} else
-			throw new \Exception("Usuário inexistente ou senha inválida.");
+			if(password_verify($password, $data['despassword'])) {
+				$user = new User();
+				$data['desperson'] = utf8_encode($data['desperson']);
+				$user->setData($data);
+				$_SESSION[User::SESSION] = $user->getValues();
+				
+				return $user;
+				
+			} else{
+				User::setMsgError("Usuário inexistente ou senha inválida.");
+			}
+		}
 	}
 	
 	public static function verifyLogin($inadmin = true) {
@@ -68,7 +71,7 @@ class User extends Model {
 		return $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) ORDER BY b.desperson");
 	}
 	
-	public static function getForgot($email) {
+	public static function getForgot($email, $inadmin = true) {
 		$sql = new Sql();
 		$results = $sql->select("SELECT * FROM tb_persons a INNER JOIN tb_users b USING(idperson) WHERE a.desemail = :email",
 								array(":email" => $email));
@@ -89,7 +92,10 @@ class User extends Model {
 				
 				$code = base64_encode(openssl_encrypt($data_recovery['idrecovery'], 'AES-128-CBC', User::SECRET));
 				
-				$link = "http://www.hcodecommerce.com.br/admin/forgot/reset?code=$code";
+				if($inadmin)
+					$link = "http://www.hcodecommerce.com.br/admin/forgot/reset?code=$code";
+				else
+					$link = "http://www.hcodecommerce.com.br/forgot/reset?code=$code";
 				
 				$mailer = new Mailer(
 						$data['desemail'], 
@@ -185,7 +191,7 @@ class User extends Model {
 	public function setPassword($password) {
 		$sql = new Sql();
 		$sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser",
-					array(":password" => $password, ":iduser" => $this->getiduser())
+					array(":password" => User::getPasswordHash($password), ":iduser" => $this->getiduser())
 		);
 
 		$sql->query("CALL sp_users_delete(:iduser)", array(":iduser" => $this->getiduser()));
