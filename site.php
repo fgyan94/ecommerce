@@ -63,6 +63,11 @@ $app->get('/products/:desurl', function($desurl){
 
 $app->get('/cart', function(){
 	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
+	
 	$cart = Cart::getFromSession();
 	
 	$page = new Page();
@@ -77,6 +82,11 @@ $app->get('/cart', function(){
 });
 
 $app->get('/cart/:idproduct/add', function($idproduct) {
+	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
 	
 	$product = new Product();
 	
@@ -96,6 +106,11 @@ $app->get('/cart/:idproduct/add', function($idproduct) {
 	
 $app->get('/cart/:idproduct/minus', function($idproduct) {
 	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
+	
 	$product = new Product();
 	
 	$product->get((int) $idproduct);
@@ -109,6 +124,11 @@ $app->get('/cart/:idproduct/minus', function($idproduct) {
 });
 	
 $app->get('/cart/:idproduct/remove', function($idproduct) {
+	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
 	
 	$product = new Product();
 	
@@ -161,7 +181,11 @@ $app->get('/checkout', function() {
 });
 
 $app->post('/checkout', function() {
-	User::checkLogin();
+	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
 	
 	foreach($_POST as $key => $value) {
 		if($key !== 'descomplement') {
@@ -186,7 +210,7 @@ $app->post('/checkout', function() {
 	
 	$cart = Cart::getFromSession();
 	
-	$total = $cart->calculateTotal();
+	$cart->calculateTotal();
 	
 	$order = new Order();
 	
@@ -195,7 +219,7 @@ $app->post('/checkout', function() {
 		'idaddress' => $address->getidaddress(),
 		'iduser' => $user->getiduser(),
 		'idstatus' => OrderStatus::EM_ABERTO,
-		'vltotal' => $total['vlprice'] + $cart->getvlfreight()
+		'vltotal' => $cart->getvltotal()
 	));
 	
 	$order->save();
@@ -339,7 +363,10 @@ $app->post('/forgot/reset', function(){
 
 $app->get('/profile', function(){
 	
-	User::checkLogin();
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
 	
 	$user = User::getFromSession();
 	
@@ -353,8 +380,11 @@ $app->get('/profile', function(){
 
 $app->post('/profile', function(){
 	
-	User::checkLogin();
-	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
+		
 	if(!isset($_POST['desperson']) || $_POST['desperson'] === '') {
 		User::setMsgError("Preencha o seu nome");
 		header("Location: /profile#user");
@@ -390,7 +420,10 @@ $app->post('/profile', function(){
 
 $app->get('/order/:idorder', function($idorder) {
 	
-	User::checkLogin();
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
 	
 	$order = new Order();
 	
@@ -406,7 +439,10 @@ $app->get('/order/:idorder', function($idorder) {
 
 $app->get('/boleto/:idorder', function($idorder) {
 	
-	User::checkLogin();
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
 	
 	$order = new Order();
 	
@@ -477,5 +513,52 @@ $app->get('/boleto/:idorder', function($idorder) {
 	require_once($path . "layout_itau.php");
 	
 });
+
+$app->get('/profile/orders', function () {
+	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
+	
+	$user = User::getFromSession();
+	
+	$page = new Page();
+	
+	$page->setTPL('profile-orders', array(
+			'orders' => $user->getOrders()
+	));
+});
+
+$app->get('/profile/orders/:idorder', function($idorder) {
+	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
+	
+	$order = new Order();
+	
+	$order->get((int) $idorder);
+	
+	$cart = new Cart();
+	
+	$cart->get((int) $order->getidcart());
+	
+	$cart->calculateTotal();
+	
+	$page = new Page();
+	
+	$page->setTPL('profile-orders-detail', array(
+			'order' => $order->getValues(),
+			'cart' => $cart->getValues(),
+			'products' => $cart->getProducts()
+	));
+	
+	
+	
+})
+	
+	
 
 ?>
