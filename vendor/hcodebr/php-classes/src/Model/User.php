@@ -312,6 +312,36 @@ class User extends Model {
 		return $results;
 			
 	}
+	
+	public static function setMsgErrorByKey($key) {
+		
+		switch ($key) {
+			case "current_pass":
+				User::setMsgError("Digite a senha atual");
+				break;
+			case "new_pass":
+				User::setMsgError("Digite a nova senha");
+				break;
+			case "new_pass_confirm":
+				User::setMsgError("Confirme a nova senha");
+				break;
+				
+			default:
+				break;
+		}
+	}
+	
+	public function checkChangePass($post) {
+		if($post['current_pass'] === $post['new_pass']) {
+			User::setMsgError("A nova senha não pode ser idêntica à atual");
+			return false;
+		} else if($post['new_pass'] !== $_POST['new_pass_confirm']) {
+			User::setMsgError("As novas senhas não correspondem");
+			return false;
+		}
+		
+		return true;
+	}
 }
 
 ?>

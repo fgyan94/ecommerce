@@ -554,11 +554,59 @@ $app->get('/profile/orders/:idorder', function($idorder) {
 			'cart' => $cart->getValues(),
 			'products' => $cart->getProducts()
 	));
+});
 	
+$app->get('/profile/changepassword', function() {
 	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
 	
-})
+	$page = new Page();
 	
+	$page->setTPL('profile-change-password', array(
+			'changePassError' => User::getMsgEror(),
+			'changePassSuccess' => User::getSuccess()
+	));
+});
+
+$app->post('/profile/changepassword', function() {
 	
+	if(!User::checkLogin()) {
+		header('Location: /login');
+		exit;
+	}
+	
+	$user = User::getFromSession();
+	
+	foreach($_POST as $key => $value) {
+		if(!isset($_POST[$key]) || $_POST[$key] === '') {
+			User::setMsgErrorByKey($key);
+			header('Location: /profile/changepassword');
+			exit;
+		}
+	}
+	
+	if(!$user->checkChangePass($_POST)) {
+		header('Location: /profile/changepassword');
+		exit;
+	}
+	
+	if(!password_verify($_POST['current_pass'], $user->getdespassword())) {
+		User::setMsgError("Senha atual inválida");
+		header('Location: /profile/changepassword');
+		exit;		
+	}
+	
+	$user->setdespassword($_POST['new_pass']);
+	
+	$user->update();
+	
+	User::setSuccess("Senha alterada com sucesso!");
+	
+	header('Location: /profile/changepassword');
+	exit;
+});
 
 ?>
