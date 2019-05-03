@@ -85,7 +85,7 @@ class Cart extends Model {
 		$_SESSION[Cart::SESSION] = $this->getValues();
 	}
 	
-	public function addProduct(Product $product) {
+	public function addProduct(Product $product) {		
 		$sql = new Sql();
 		
 		$sql->query("INSERT INTO tb_cartsproducts (idcart, idproduct) VALUES(:idcart, :idproduct)",
@@ -169,6 +169,7 @@ class Cart extends Model {
 			if($total['vlheight'] < 2) $total['vlheight'] = 2;
 			if($total['vllength'] < 16) $total['vllength'] = 16;
 			
+			
 			$qs = http_build_query(array(
 					'nCdEmpresa' => '',
 					'sDsSenha' => '',
@@ -250,6 +251,10 @@ class Cart extends Model {
  		$this->setvlsubtotal($total['vlprice']);
  		$this->setvltotal($this->getvlsubtotal() + $this->getvlfreight());
  		
+ 	}
+ 	
+ 	public static function logout() {
+ 		unset($_SESSION[Cart::SESSION]);
  	}
  	
 }

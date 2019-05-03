@@ -6,6 +6,22 @@ use Hcode\Model;
 use Hcode\DB\Sql;
 
 class Order extends Model {
+	const SESSION_ERROR = "OrderError";
+	const SESSION_SUCCESS = "OrderSuccess";
+	
+	public static function listAll() {
+		$sql = new Sql();
+		
+		return $sql->select("SELECT *
+								 FROM tb_orders a
+								 INNER JOIN tb_ordersstatus b USING(idstatus)
+								 INNER JOIN tb_carts c USING(idcart)
+								 INNER JOIN tb_users d ON d.iduser = a.iduser
+								 INNER JOIN tb_addresses e ON a.idaddress = e.idaddress
+								 INNER JOIN tb_persons f ON f.idperson = d.idperson
+								 ORDER BY a.dtregister DESC"
+				);
+	}
 	
 	public function save() {
 		$sql = new Sql();
@@ -28,12 +44,12 @@ class Order extends Model {
 	public function get($idorder) {
 		$sql = new Sql();
 		
-		$results = $sql->select("SELECT * 
-								 FROM tb_orders a 
-								 INNER JOIN tb_ordersstatus b USING(idstatus) 
+		$results = $sql->select("SELECT *
+								 FROM tb_orders a
+								 INNER JOIN tb_ordersstatus b USING(idstatus)
 								 INNER JOIN tb_carts c USING(idcart)
 								 INNER JOIN tb_users d ON d.iduser = a.iduser
-								 INNER JOIN tb_addresses e USING(idaddress)
+								 INNER JOIN tb_addresses e ON a.idaddress = e.idaddress
 								 INNER JOIN tb_persons f ON f.idperson = d.idperson
 								 WHERE a.idorder = :idorder
 								",
@@ -44,6 +60,58 @@ class Order extends Model {
 		
 		if(count($results) > 0)
 			$this->setData($results[0]);
+		
+	}
+	
+	public function delete() {
+		$sql = new Sql();
+		
+		$sql->query("DELETE FROM tb_orders WHERE idorder = :idorder", [':idorder' => $this->getidorder()]);
+	}
+	
+	public static function setSuccess($msg) {
+		
+		$_SESSION[Order::SESSION_SUCCESS] = $msg;
+		
+	}
+	
+	
+	public static function getSuccess() {
+		
+		$msg = isset($_SESSION[Order::SESSION_SUCCESS]) ? $_SESSION[Order::SESSION_SUCCESS] : "";
+		
+		Order::clearSuccess();
+		
+		return $msg;
+		
+	}
+	
+	public static function clearSuccess() {
+		
+		$_SESSION[Order::SESSION_SUCCESS] = "";
+		
+	}
+	
+	public static function setError($msg) {
+		
+		$_SESSION[Order::SESSION_ERROR] = $msg;
+		
+	}
+	
+	
+	public static function getError() {
+		
+		$msg = isset($_SESSION[Order::SESSION_ERROR]) ? $_SESSION[Order::SESSION_ERROR] : "";
+		
+		Order::clearError();
+		
+		return $msg;
+		
+	}
+	
+	public static function clearError() {
+		
+		$_SESSION[Order::SESSION_ERROR] = "";
 		
 	}
 	

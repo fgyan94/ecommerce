@@ -148,6 +148,7 @@ $app->post('/cart/freight', function() {
 	
 	$cart->setFreight($_POST['zipcode']);
 	
+	
 	header('Location: /cart');
 	exit;
 });
@@ -215,6 +216,7 @@ $app->post('/checkout', function() {
 	$order = new Order();
 	
 	$order->setData(array(
+		'idorder' => $order->getidorder(),
 		'idcart' => $cart->getidcart(),
 		'idaddress' => $address->getidaddress(),
 		'iduser' => $user->getiduser(),
@@ -258,7 +260,8 @@ $app->post('/login', function() {
 
 $app->get('/logout', function() {
 	User::logout();
-	
+	Cart::logout();
+	session_regenerate_id();
 	header('Location: /');
 	exit;
 });
@@ -306,6 +309,7 @@ $app->post('/register', function() {
 	User::login($_POST['email'], $_POST['password']);
 	
 	header('Location: /checkout');
+	exit;
 });
 
 $app->get('/forgot', function() {
@@ -452,8 +456,9 @@ $app->get('/boleto/:idorder', function($idorder) {
 	$dias_de_prazo_para_pagamento = 10;
 	$taxa_boleto = 5.00;
 	$data_venc = date("d/m/Y", time() + ($dias_de_prazo_para_pagamento * 86400));  // Prazo de X dias OU informe data: "13/04/2006";
-	$valor_cobrado = formatPrice($order->getvltotal()); // Valor - REGRA: Sem pontos na milhar e tanto faz com "." ou "," ou com 1 ou 2 ou sem casa decimal
-	$valor_cobrado = str_replace(",", ".",$valor_cobrado);
+	$valor_cobrado = $order->getvltotal();
+// 	$valor_cobrado = formatPrice((float)$order->getvltotal()); // Valor - REGRA: Sem pontos na milhar e tanto faz com "." ou "," ou com 1 ou 2 ou sem casa decimal
+// 	$valor_cobrado = str_replace(",", ".",$valor_cobrado);
 	$valor_boleto=number_format($valor_cobrado+$taxa_boleto, 2, ',', '');
 	
 	$dadosboleto["nosso_numero"] = $order->getidorder();  // Nosso numero - REGRA: Máximo de 8 caracteres!

@@ -11,6 +11,12 @@ function formatPrice($vlprice) {
 	
 }
 
+function formatDate($date) {
+	
+	return date('d/m/Y', strtotime($date));
+	
+}
+
 function formatValueToDecimal($value):float {
 	
 	$value = str_replace(".", "", $value);
@@ -42,7 +48,7 @@ function getTotal() {
 	
 	$val = $cart->getProductTotals();
 	
-	return $val['vlprice'];
+	return isset($val['vlprice']) ? $val['vlprice'] : "0,00";
 }
 
 ?>
