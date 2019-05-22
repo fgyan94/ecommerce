@@ -157,7 +157,7 @@ class Category extends Model {
 								  ORDER BY descategory
 								  LIMIT $start, $itemsPerPage",
 				[
-						":search" => $search
+						":search" => "%$search%"
 				]);
 		
 		$nrTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal");
