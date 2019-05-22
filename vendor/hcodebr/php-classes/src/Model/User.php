@@ -374,7 +374,7 @@ class User extends Model {
 								  ORDER BY b.desperson
 								  LIMIT $start, $itemsPerPage", 
 								[
-										":search" => $search
+									":search" => $search
 								]);
 		
 		$nrTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal");
