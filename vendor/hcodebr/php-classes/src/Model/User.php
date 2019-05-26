@@ -194,8 +194,6 @@ class User extends Model {
 		$sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser",
 					array(":password" => User::getPasswordHash($password), ":iduser" => $this->getiduser())
 		);
-
-		$sql->query("CALL sp_users_delete(:iduser)", array(":iduser" => $this->getiduser()));
 	}
 	
 	public function get($iduser){

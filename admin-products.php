@@ -13,11 +13,11 @@ $app->get('/admin/products', function() {
 	
 	if($search != '') {
 		
-		$pagination = Product::getPageSearch($search, $page, 1);
+		$pagination = Product::getPageSearch($search, $page, 10);
 		
 	} else {
 		
-		$pagination = Product::getPage($page, 1);
+		$pagination = Product::getPage($page, 10);
 		
 	}
 	

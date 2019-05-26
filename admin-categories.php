@@ -15,11 +15,11 @@ $app->get('/admin/categories', function() {
 	
 	if($search != '') {
 		
-		$pagination = Category::getPageSearch($search, $page, 1);
+		$pagination = Category::getPageSearch($search, $page, 10);
 		
 	} else {
 		
-		$pagination = Category::getPage($page, 1);
+		$pagination = Category::getPage($page, 10);
 		
 	}
 	

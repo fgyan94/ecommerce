@@ -11,11 +11,11 @@ $app->get("/admin/users", function() {
 	
 	if($search != '') {
 		
-		$pagination = User::getPageSearch($search, $page, 1);
+		$pagination = User::getPageSearch($search, $page, 10);
 		
 	} else {
 	
-		$pagination = User::getPage($page, 1);
+		$pagination = User::getPage($page, 10);
 		
 	}
 	
@@ -35,6 +35,57 @@ $app->get("/admin/users", function() {
 			"search" => $search,
 			"pages" => $pages
 	));
+});
+	
+$app->get("/admin/users/:iduser/password", function($iduser) {
+	
+	User::verifyLogin();
+	
+	$user = new User();
+	
+	$user->get((int) $iduser);
+	
+	$page = new PageAdmin();
+	
+	$page->setTPL("users-password", [
+			"user" => $user->getValues(),
+			"msgError" => $user->getErrorRegister(),
+			"msgSuccess" => $user->getSuccess()
+	]);
+	
+});
+		
+$app->post("/admin/users/:iduser/password", function($iduser) {
+	
+	User::verifyLogin();
+	
+	if(!isset($_POST['despassword']) || $_POST['despassword'] === '') {
+		User::setErrorRegister("Preencha a nova senha.");
+		header("Location: /admin/users/$iduser/password");
+		exit;
+	}
+	
+	if(!isset($_POST['despassword-confirm']) || $_POST['despassword-confirm'] === '') {
+		User::setErrorRegister("Preencha a confirmação da nova senha.");
+		header("Location: /admin/users/$iduser/password");
+		exit;
+	}
+	
+	if($_POST['despassword'] !== $_POST['despassword-confirm']) {
+		User::setErrorRegister("As senhas não correspondem.");
+		header("Location: /admin/users/$iduser/password");
+		exit;
+	}
+	
+	$user = new User();
+	
+	$user->get((int) $iduser);
+	
+	$user->setPassword($_POST['despassword']);
+	
+	User::setSuccess("Senha atualizada com sucesso.");
+	header("Location: /admin/users/$iduser/password");
+	exit;
 });
 	
 $app->get("/admin/users/create", function() {

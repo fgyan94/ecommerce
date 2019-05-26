@@ -100,11 +100,11 @@ $app->get('/admin/orders', function(){
 	
 	if($search != '') {
 		
-		$pagination = Order::getPageSearch($search, $page, 1);
+		$pagination = Order::getPageSearch($search, $page, 10);
 		
 	} else {
 		
-		$pagination = Order::getPage($page, 1);
+		$pagination = Order::getPage($page, 10);
 		
 	}
 	
