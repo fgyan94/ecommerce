@@ -171,13 +171,22 @@ $app->get('/checkout', function() {
 		$cart->calculateTotal();
 	}
 	
+	if(!$address->getdesaddress()) $address->setdesaddress('');
+	if(!$address->getdesnumber()) $address->setdesnumber('');
+	if(!$address->getdescomplement()) $address->setdescomplement('');
+	if(!$address->getdesdistrict()) $address->setdesdistrict('');
+	if(!$address->getdescity()) $address->setdescity('');
+	if(!$address->getdesstate()) $address->setdesstate('');
+	if(!$address->getdescountry()) $address->setdescountry('');
+	if(!$address->getdeszipcode()) $address->setdeszipcode('');
+	
 	$page = new Page();
 	
 	$page->setTPL('checkout', array(
 			'cart' => $cart->getValues(),
 			'address' => $address->getValues(),
 			'products' => $cart->getProducts(),
-			'error' => Address::getMsgEror()
+			'checkoutError' => Address::getMsgEror()
 	));
 });
 
@@ -188,15 +197,15 @@ $app->post('/checkout', function() {
 		exit;
 	}
 	
-	foreach($_POST as $key => $value) {
-		if($key !== 'descomplement') {
-			if(!isset($_POST[$key]) || $_POST[$key] === '') {
-				Address::setMsgErrorByKey($key);
-				header('Location: /checkout');
-				exit;
-			}
-		}
-	}
+// 	foreach($_POST as $key => $value) {
+// 		if($key !== 'descomplement') {
+// 			if(!isset($_POST[$key]) || $_POST[$key] === '') {
+// 				Address::setMsgErrorByKey($key);
+// 				header('Location: /checkout');
+// 				exit;
+// 			}
+// 		}
+// 	}
 	
 	$user = User::getFromSession();
 	
@@ -205,8 +214,7 @@ $app->post('/checkout', function() {
 	$_POST['deszipcode'] = $_POST['zipcode'];
 	$_POST['idperson'] = $user->getiduser();
 	
-	$address->setData($_POST);
-	
+	$address->setData($_POST);	
 	$address->save();
 	
 	$cart = Cart::getFromSession();

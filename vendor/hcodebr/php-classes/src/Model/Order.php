@@ -28,12 +28,12 @@ class Order extends Model {
 		
 		$results = $sql->select("CALL sp_orders_save(:idorder, :idcart, :iduser, :idstatus, :idaddress, :vltotal)", 
 					array(
-						':idorder' => $this->getidorder(),
-						':idcart' => $this->getidcart(),
-						':iduser' => $this->getiduser(),
-						':idstatus' => $this->getidstatus(),
-						':idaddress' => $this->getidaddress(),
-						':vltotal' => $this->getvltotal()
+						':idorder' => (int) $this->getidorder(),
+						':idcart' => (int) $this->getidcart(),
+						':iduser' => (int) $this->getiduser(),
+						':idstatus' => (int) $this->getidstatus(),
+						':idaddress' => (int) $this->getidaddress(),
+						':vltotal' => (int) $this->getvltotal()
 					)
 		);
 		
