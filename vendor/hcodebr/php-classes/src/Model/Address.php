@@ -2,7 +2,6 @@
 
 namespace Hcode\Model;
 
-use Hcode\DB;
 use Hcode\Model;
 use Hcode\DB\Sql;
 
@@ -31,6 +30,7 @@ class Address extends Model {
 		
 		$this->setdesaddress($data['logradouro']);
 		$this->setdescomplement($data['complemento']);
+		$this->setdesnumber('');
 		$this->setdesdistrict($data['bairro']);
 		$this->setdescity($data['localidade']);
 		$this->setdesstate($data['uf']);
