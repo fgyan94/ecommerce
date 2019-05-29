@@ -113,7 +113,17 @@
 													</tr>
 												</tfoot>
 											</table>
-											<div id="payment">
+											<div style="display: flex; flex-direction: row;">
+												<div style="display: flex; flex-direction: row;">
+													<input style="display: block; margin: auto;" type="radio" id="method-pagseguro" name="payment-method" value="1" checked/>
+													<label style="display: block; margin: auto; margin-left: 10px; vertical-align: middle;" for="method-pagseguro"><img style="height: 52px;" src="/res/site/img/logo-pagseguro.png" /></label>
+												</div>
+												<div style="display: flex; flex-direction: row;">
+													<input style="display: block; margin: auto; margin-left: 35px;" type="radio" id="method-paypal" name="payment-method" value="2" />
+													<label style="display: block; margin: auto; margin-left: 10px;" for="method-paypal"><img style="height: 52px;" src="/res/site/img/logo-paypal.png" /></label>
+												</div>
+											</div>
+											<div id="payment" style="margin-top: 50px;">
 												<div class="form-row place-order">
 													<input type="submit" data-value="Place order" value="Continuar" id="place_order" name="woocommerce_checkout_place_order" class="button alt">
 												</div>
